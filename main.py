@@ -1,7 +1,7 @@
 '''
-    Created on Sep 19, 2014
+    Created on May 16, 2015
     
-    @author: liu.chunming
+    @author: idear
     '''
 #!/usr/bin/env python
 #coding=utf-8
@@ -9,6 +9,8 @@
 import os
 import html2text
 import sys
+import nltk
+from nltk.tokenize import word_tokenize
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -48,7 +50,7 @@ class ScanFile(object):
 
 if __name__=="__main__":
     #dir=r"/Users/wangdongwei/Documents/homework/machinelearning/html2txt/html2text4raw/test"
-    #dir=r"/Users/wangdongwei/Documents/homework/machinelearning/html2txt/html2text4raw/test/index"
+    #dir=r"/Users/wangdongwei/Documents/homework/machinelearning/html2txt/html2text4raw/test/a/index"
     #dir = r"/Users/wangdongwei/Documents/homework/machinelearning/homework/weps2007_data_1.1/traininig/web_pages/John_Kennedy/raw"
     dir = r"/Users/wangdongwei/Documents/homework/machinelearning/homework/weps2007_data_1.1/traininig/web_pages"
     scan=ScanFile(dir,postfix="index.html")
@@ -79,12 +81,23 @@ if __name__=="__main__":
           if encoding is None:
             encoding = 'utf-8'
           data = data.decode(encoding, errors='ignore')
+          #data = data.decode(encoding )
           h = html2text.HTML2Text(baseurl=file)
           h.ignore_links = True
           h.ignore_images = True
+          h.ignore_emphasis = True
+          h.body_width = 0
           pt =  h.handle(data)
+          rows = pt.splitlines(True)
+          newrows = []
+          for row in rows:
+            if len(row) > 1:
+              if len(word_tokenize(row)) > 15:
+                newrows.append(row + "\n")
+          newpt = ''.join(newrows)
+          #print(newpt)
           writefile = open(news, 'wb')
-          writefile.write(pt)
+          writefile.write(newpt)
           writefile.close()
         else :
           print ('Skip ' + file)
