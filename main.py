@@ -48,10 +48,24 @@ class ScanFile(object):
             subdir_list.append(dirpath)
         return subdir_list
 
+def mkdir(path):
+    import os
+    
+    path=path.strip()
+    path=path.rstrip("\\")
+    
+    isExists=os.path.exists(path)
+    
+    if not isExists:
+        os.makedirs(path)
+        return True
+    else:
+        return False
+
 if __name__=="__main__":
     #dir=r"/Users/wangdongwei/Documents/homework/machinelearning/html2txt/html2text4raw/test"
     #dir=r"/Users/wangdongwei/Documents/homework/machinelearning/html2txt/html2text4raw/test/a/index"
-    #dir = r"/Users/wangdongwei/Documents/homework/machinelearning/homework/weps2007_data_1.1/traininig/web_pages/John_Kennedy/raw"
+    #dir = r"/Users/wangdongwei/Documents/homework/machinelearning/homework/weps2007_data_1.1/traininig/web_pages/John_Kennedy/raw/000"
     dir = r"/Users/wangdongwei/Documents/homework/machinelearning/homework/weps2007_data_1.1/traininig/web_pages"
     scan=ScanFile(dir,postfix="index.html")
     #subdirs=scan.scan_subdir()
@@ -68,9 +82,12 @@ if __name__=="__main__":
     for file in files:
         s = file
         pos = s.rfind(".")
-        news = s[:pos] + txt
+        news = s[:pos].replace('web_pages', 'plain_text') + txt
+        folderpos = s.rfind("/")
+        newfolder = s[:folderpos].replace('web_pages', 'plain_text')
         if os.path.isfile(news) is False:
           print ('Processing ' + file)
+          mkdir(newfolder)
           data = open(file, 'rb').read()
           encoding = None
           try:
